@@ -25,7 +25,12 @@ export const useGoogleMaps = () => {
         }
 
         const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDf1vfB2AGpVCGh1fdwB5mMZ-ClAnYh0ic&libraries=places,geometry`;
+        const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+        if (!apiKey) {
+          reject(new Error('VITE_GOOGLE_MAPS_API_KEY is not set. Add it to your .env file.'));
+          return;
+        }
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry`;
         script.async = true;
         script.defer = true;
 
