@@ -1,117 +1,206 @@
 # Left2Lift
-**Bridging the gap between excess food and empty plates. Left2Lift is a web platform that connects restaurants with surplus food to NGOs, facilitating efficient collection and distribution to combat hunger and reduce waste.**
+
+**Left2Lift connects food donors and NGOs to reduce food waste and improve last-mile food redistribution.**
 
 ---
 
-## 📜 Table of Contents
+## 📌 Table of Contents
 
-- [The Problem](#-the-problem)
-- [Our Solution](#-our-solution)
-- [Key Features](#-key-features)
-- [System Flow](#-system-flow)
-- [Technical Stack](#-technical-stack)
+- [Overview](#-overview)
+- [Implemented Features](#-implemented-features)
+- [How It Works](#-how-it-works)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Environment Variables](#-environment-variables)
 - [Getting Started](#-getting-started)
+- [Available Scripts](#-available-scripts)
+- [Data Model (Firestore)](#-data-model-firestore)
+- [Notes](#-notes)
 - [License](#-license)
 
 ---
 
-## 🌍 The Problem
+## 🌍 Overview
 
-Every year, an estimated **1.3 billion tonnes of food** is wasted globally — nearly one-third of all food produced for human consumption. This staggering figure, reported by the UN Food and Agriculture Organization (FAO), stands in stark contrast to the reality that over **800 million people** worldwide suffer from chronic hunger.
+Left2Lift is a role-based web app where:
+- **Donors** (restaurants/events) post surplus food pickups.
+- **NGOs** discover nearby pickups, claim them, and navigate to locations.
 
-The restaurant and hospitality industry is a significant contributor to this paradox. Due to the challenges of predicting daily customer traffic, managing perishable inventory, and maintaining high standards of freshness, vast quantities of perfectly edible, nutritious food are often discarded at the end of the day. This isn't just a business loss; it represents a massive environmental burden in terms of wasted resources (water, land, energy) and increased greenhouse gas emissions from landfills. It is, above all, a profound social and ethical failure.
+The project currently uses a **Vite + React + TypeScript + Firebase** architecture with map-based donation discovery and route assistance.
 
-## 💡 Our Solution
+---
 
-**Left2Lift** tackles this challenge head-on by creating a seamless, real-time logistics platform designed for speed and efficiency. We provide a simple, intuitive interface for two key user groups, closing the loop between food surplus and food scarcity:
+## ✨ Implemented Features
 
-1.  **Restaurants & Food Donors:** Can quickly and easily list surplus food items that are available for pickup, specifying the quantity, type, and a convenient pickup window. This takes only minutes, turning potential waste into a valuable donation.
-2.  **NGOs & Community Organizations:** Receive instant, geo-targeted notifications about available food in their vicinity. They can accept pickup requests with a single click and use an optimized routing system to collect the food efficiently, maximizing the number of pickups they can handle.
+### Authentication & Roles
+- Email/password sign up and login using Firebase Authentication.
+- Role selection during signup: **donor** or **ngo**.
+- Role-based routing:
+  - `/donor` for donors
+  - `/ngo` for NGOs
 
-Our core objective is to transform surplus into sustenance, ensuring that good food nourishes people, not landfills. By doing so, we help businesses reduce their environmental footprint, support communities in need, and build a more sustainable and equitable food system.
+### Donor Features
+- Post donation with:
+  - title, description, quantity, food type
+  - best-before datetime
+  - pickup window
+  - address + coordinates
+- Google Places autocomplete support in address input.
+- Auto-fill fallback using browser geolocation.
+- Donor dashboard with donation status cards:
+  - total, available, claimed, completed.
 
-## ✨ Key Features
+### NGO Features
+- Real-time donation feed from Firestore.
+- Map and list view toggle.
+- Filters: all available, available now, claimed, mine.
+- Claim donation flow (status update in Firestore).
+- Quick open route in Google Maps (`maps/dir` fallback to `maps/search`).
+- Live map markers with donation info windows.
+- Multi-pickup selector and route tracker:
+  - optimized waypoints via Google Directions API
+  - ETA + distance display
+  - progress tracking and completion flow
+- In-app notification when new donations appear.
 
--   **Real-time Food Listings:** Restaurants can post details about available food, including type (e.g., "Baked Goods," "Cooked Meals"), quantity (e.g., "feeds 60 people"), and a specific pickup window (e.g., "from 9:00 PM to 10:00 PM").
--   **Instant NGO Notifications:** Registered NGOs are alerted immediately via the platform when a new pickup becomes available within their operational radius, ensuring no opportunity is missed.
--   **Optimized Route Navigation:** Upon accepting a pickup, the platform displays an integrated map view powered by a leading mapping service, showing the best route from the NGO's current location to the restaurant.
--   **Pickup Management Dashboard:** NGOs can manage their active pickups in a simple dashboard. They can mark food as "Collected," and if handling multiple pickups, the system will seamlessly guide them to the next location.
--   **Responsive & Mobile-First Design:** The entire interface is designed to be highly responsive, ensuring that NGO drivers and restaurant staff can use the application effectively on mobile devices and tablets while on the go.
--   **Secure Authentication:** Separate, secure login portals for restaurants and NGOs, managed by Firebase Authentication, ensure that only authorized users can list or claim food donations.
+### UI/UX
+- Responsive dashboards for donor/NGO use.
+- Status-aware donation cards and badges.
+- Modal-based posting and route flows.
 
-## 🔄 System Flow
+---
 
-1.  **Donation:** A manager at a partner restaurant logs into their dashboard and creates a new "Pickup Available" listing. They fill in key details: type of food, estimated number of people it can feed, and the hours it will be available for collection.
-2.  **Notification:** The ZeroWaste DineMao system instantly identifies all registered NGOs within a predefined geographic radius of the restaurant and sends a notification to their dashboards.
-3.  **Acceptance:** An NGO field worker monitoring the platform sees the notification, reviews the details, and accepts the pickup with a single tap. The listing is then marked as "Claimed" to prevent multiple NGOs from heading to the same location.
-4.  **Navigation:** The app immediately transitions to a map view, displaying the optimized route to the restaurant. A compact, non-intrusive card at the bottom of the screen shows key pickup details (address, food type) without obstructing the map.
-5.  **Collection:** The NGO driver arrives at the restaurant, presents their credentials via the app, collects the food, and marks the pickup as "Collected" in the app. This updates the dashboard and provides a record of the successful donation.
-6.  **Distribution:** The food is successfully diverted from waste streams and is now ready to be transported back to the NGO's facility for immediate distribution to communities in need.
+## 🔄 How It Works
 
-## 🛠️ Technical Stack
+1. Donor signs in and posts a new food donation.
+2. Donation is stored in Firestore (`donations`) with status `available`.
+3. NGO dashboard receives updates in real-time.
+4. NGO claims a donation (`claimedBy`, `claimedByName`, `claimedAt`).
+5. NGO navigates using map route tools and external Google Maps directions.
+6. Pickup progress is tracked in the route experience.
 
-This project is built with a modern, robust, and scalable technology stack chosen for performance and reliability:
+---
 
--   **Framework:** [Next.js](https://nextjs.org/) (utilizing the App Router). Chosen for its high performance, server-side rendering (SSR) capabilities for fast initial page loads, and excellent developer experience.
--   **Language:** [TypeScript](https://www.typescriptlang.org/). Used to enhance code quality, maintainability, and reduce bugs through static type checking.
--   **UI Framework:** [React](https://reactjs.org/). The leading library for building dynamic, component-based user interfaces.
--   **Component Library:** [ShadCN UI](https://ui.shadcn.com/). Provides a set of beautifully designed, accessible, and customizable components that accelerate development.
--   **Styling:** [Tailwind CSS](https://tailwindcss.com/). A utility-first CSS framework that allows for rapid styling directly within the markup without leaving the HTML.
--   **Icons:** [Lucide React](https://lucide.dev/). A comprehensive and lightweight icon library that ensures visual consistency.
--   **Backend & Database:** [Firebase](https://firebase.google.com/). A comprehensive platform used for:
-    -   **Firestore:** A NoSQL, real-time database for storing food listings and user data. Its real-time capabilities are perfect for instant notifications.
-    -   **Firebase Authentication:** Handles secure user login and management for both restaurants and NGOs.
+## 🛠️ Tech Stack
+
+- **Frontend:** React 18 + TypeScript
+- **Build Tool:** Vite 5
+- **Routing:** React Router DOM 7
+- **Styling:** Tailwind CSS
+- **Icons:** Lucide React
+- **Backend Services:** Firebase
+  - Authentication
+  - Firestore
+  - Storage
+- **Maps:** Google Maps JavaScript API (Maps, Places, Geometry)
+
+---
+
+## 📂 Project Structure
+
+```text
+src/
+  components/
+    Auth/
+    Donor/
+    NGO/
+    Layout/
+  config/
+    firebase.ts
+  hooks/
+    useAuth.ts
+    useGoogleMaps.ts
+  types/
+    index.ts
+  App.tsx
+```
+
+---
+
+## 🔐 Environment Variables
+
+Create a `.env` file in the project root (same level as `package.json`) with:
+
+```env
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
+
+### Google Maps key
+This project currently loads Google Maps in `src/hooks/useGoogleMaps.ts`.
+Make sure the key used there is valid and has APIs enabled:
+- Maps JavaScript API
+- Places API
+- Directions API
+
+---
 
 ## 🚀 Getting Started
 
-Follow these instructions to get a local copy of the project up and running for development and testing purposes.
+### 1) Clone
+```bash
+git clone https://github.com/Tejas164321/Left2Lift.git
+cd Left2Lift
+```
 
-### Prerequisites
+### 2) Install dependencies
+```bash
+npm install
+```
 
--   Node.js (v18 or later recommended)
--   npm, yarn, or pnpm package manager
+### 3) Add environment variables
+Create `.env` and paste the `VITE_*` values above.
 
-### Installation
+### 4) Start development server
+```bash
+npm run dev
+```
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-username/zerowaste-dinemao.git
-    cd zerowaste-dinemao
-    ```
+Then open the local URL shown by Vite (commonly `http://localhost:5173`).
 
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
+---
 
-3.  **Set up environment variables:**
-    Create a file named `.env.local` in the root of your project. You will need to add your Firebase project configuration keys. You can find these by creating a new web app in your Firebase project console.
+## 📜 Available Scripts
 
-    ```env
-    # Firebase Client SDK Configuration (for the browser)
-    NEXT_PUBLIC_FIREBASE_API_KEY=AIza...
-    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
-    NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
-    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
-    NEXT_PUBLIC_FIREBASE_APP_ID=1:...:web:...
+```bash
+npm run dev      # start dev server
+npm run build    # production build
+npm run lint     # lint project
+npm run preview  # preview production build
+```
 
-    # Firebase Admin SDK Configuration (for server-side actions)
-    # Go to Project Settings > Service Accounts in Firebase to generate a new private key
-    FIREBASE_CLIENT_EMAIL=firebase-adminsdk-...@...iam.gserviceaccount.com
-    # Ensure the private key is enclosed in quotes and newlines are preserved with \n
-    FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-    ```
+---
 
-4.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
+## 🧾 Data Model (Firestore)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### `users`
+- `email`
+- `displayName`
+- `role` (`donor` | `ngo`)
+- `createdAt`
+
+### `donations`
+- `donorId`, `donorName`
+- `title`, `description`, `quantity`, `foodType`
+- `expiryTime`, `pickupWindow`
+- `location` (`lat`, `lng`, `address`)
+- `status` (`available` | `claimed` | `picked` | `expired`)
+- optional claim metadata: `claimedBy`, `claimedByName`, `claimedAt`
+- `createdAt`
+
+---
+
+## 📝 Notes
+
+- Some UI labels still contain older naming in a few places (e.g., "ZeroWaste DineMap" text), but app functionality is wired to Left2Lift flows.
+- Firestore indexes may be required for combined `where + orderBy` queries used in dashboards.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the `LICENSE.md` file for details....
+This project is licensed under the MIT License.
