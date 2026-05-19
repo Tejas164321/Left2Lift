@@ -122,23 +122,27 @@ src/
 Create a `.env` file in the project root (same level as `package.json`) with:
 
 ```env
+# Firebase configuration
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your-project-id
 VITE_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
+
+# Google Maps
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 ```
 
-### Google Maps key
-This project currently loads Google Maps in `src/hooks/useGoogleMaps.ts`.
-At the moment, the Google Maps API key is read directly in that hook (not from `.env`).
-Make sure the key used there is valid and has APIs enabled:
+### Where to find these values
+- **Firebase keys** – Firebase Console → Project Settings → Your apps → Web app SDK config.
+- **Google Maps key** – [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → Create API key.
+
+### Required Google Maps APIs
+Enable the following in the Google Cloud Console for your key:
 - Maps JavaScript API
 - Places API
 - Directions API
-
-> If you want env-based config, wire `VITE_GOOGLE_MAPS_API_KEY` in `useGoogleMaps.ts`.
 
 ---
 
@@ -156,7 +160,7 @@ npm install
 ```
 
 ### 3) Add environment variables
-Create `.env` and paste the `VITE_*` values above.
+Create `.env` in the project root and fill in the `VITE_FIREBASE_*` and `VITE_GOOGLE_MAPS_API_KEY` values from the [Environment Variables](#-environment-variables) section above.
 
 ### 4) Start development server
 ```bash
