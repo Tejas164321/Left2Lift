@@ -132,10 +132,13 @@ VITE_FIREBASE_APP_ID=your_app_id
 
 ### Google Maps key
 This project currently loads Google Maps in `src/hooks/useGoogleMaps.ts`.
+At the moment, the Google Maps API key is read directly in that hook (not from `.env`).
 Make sure the key used there is valid and has APIs enabled:
 - Maps JavaScript API
 - Places API
 - Directions API
+
+> If you want env-based config, wire `VITE_GOOGLE_MAPS_API_KEY` in `useGoogleMaps.ts`.
 
 ---
 
