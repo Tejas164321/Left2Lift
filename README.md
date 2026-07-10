@@ -292,5 +292,5 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
  
 ---
  
-> Made with ❤️ to reduce food waste, one pickup at a time.
+> Made with ❤️ to reduce food waste, one pickup at a time...
 > ⭐ Star this repo if you find it helpful!
