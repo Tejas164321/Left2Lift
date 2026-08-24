@@ -59,7 +59,7 @@ The platform provides real-time updates, map-based discovery, and route optimiza
  
 ---
  
-## ✨ Implemented Features
+## ✨ Implemented Features.
  
 ### 🔐 Authentication & Roles
 - Email/password sign-up and login via **Firebase Authentication**
