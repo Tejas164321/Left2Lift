@@ -28,7 +28,7 @@
 - [License](#-license)
 ---
  
-## 🌍 Overview
+## 🌍 Overview.
  
 **Left2Lift** is a role-based web app built to eliminate food waste at the last mile.
  
