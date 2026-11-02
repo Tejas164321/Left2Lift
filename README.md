@@ -12,7 +12,7 @@
 ![Google Maps](https://img.shields.io/badge/Google_Maps-API-4285F4?logo=googlemaps&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-<img src="./public/hero-banner.png" alt="Left2Lift dashboard" width="800" />
+<img src="./src/hero-banner.png" alt="Left2Lift dashboard" width="800" />
 
 </div>
 
